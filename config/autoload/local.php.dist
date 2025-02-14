@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Local Configuration Override
+ *
+ * This configuration override file is for overriding environment-specific and
+ * security-sensitive configuration information. Copy this file without the
+ * .dist extension at the end and populate values as needed.
+ *
+ * NOTE: This file is ignored from Git by default with the .gitignore included
+ * in laminas-mvc-skeleton. This is a good practice, as it prevents sensitive
+ * credentials from accidentally being committed into version control.
+ */
+
+return [
+    
+    'view_helpers' => [
+        'invokables' => [
+            'form'         => \Laminas\Form\View\Helper\Form::class,
+            'formButton'   => \Laminas\Form\View\Helper\FormButton::class,
+            'formText'     => \Laminas\Form\View\Helper\FormText::class,
+            'formLabel'    => \Laminas\Form\View\Helper\FormLabel::class,
+            'formInput'    => \Laminas\Form\View\Helper\FormInput::class,
+            'formElement'  => \Laminas\Form\View\Helper\FormElement::class,
+            'formCollection'=> \Laminas\Form\View\Helper\FormCollection::class,
+            // otros helpers según sea necesario
+        ],
+    ]
+];
