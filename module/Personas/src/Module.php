@@ -1,6 +1,6 @@
 <?php
 
-namespace Album;
+namespace Personas;
 
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 
