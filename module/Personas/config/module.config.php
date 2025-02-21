@@ -1,48 +1,46 @@
 <?php
 
-namespace Album;
+namespace Persona;
 
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
-use Album\Model\AlbumTableFactory;
+use Persona\Model\PersonaFactory;
 use Laminas\Router\Http\Segment;
-use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
     'controllers' => [
         'factories' => [
-            Controller\AlbumController::class => ReflectionBasedAbstractFactory::class
+            Controller\PersonaController::class => ReflectionBasedAbstractFactory::class
         ],
     ],
-    
     'router' => [
         'routes' => [
-            'album' => [
-                'type'    => Segment::class,
+            'persona' => [
+                'type' => Segment::class,
                 'options' => [
-                    'route' => '/album[/:action[/:id]]',
+                    'route' => '/persona[/:action[/:idPersona]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id'     => '[0-9]+',
+                        'idPersona' => '[0-9]+',
                     ],
                     'defaults' => [
-                        'controller' => Controller\AlbumController::class,
-                        'action'     => 'index',
+                        'controller' => Controller\PersonaController::class,
+                        'action' => 'index',
                     ],
                 ],
             ],
         ],
     ],
-    
     'view_manager' => [
         'template_path_stack' => [
-            'album' => __DIR__ . '/../view',
+            'persona' => __DIR__ . '/../view',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy'
         ],
     ],
-    
     'service_manager' => [
         'factories' => [
-            Model\AlbumTable::class => AlbumTableFactory::class,
+            Persona\Model\PersonaTable::class => Persona\Model\PersonaTableFactory::class,
         ],
-
     ],
 ];
