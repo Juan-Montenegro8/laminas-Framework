@@ -1,15 +1,15 @@
 <?php
 
-namespace Album\Controller;
+namespace Personas\Controller;
 
-use Album\Model\AlbumTable;
+use Personas\Model\AlbumTable;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 
-use Album\Form\AlbumForm;
-use Album\Model\Album;
+use Personas\Form\AlbumForm;
+use Personas\Model\Album;
 
-class AlbumController extends AbstractActionController
+class PersonaController extends AbstractActionController
 {
     private $table;
 
