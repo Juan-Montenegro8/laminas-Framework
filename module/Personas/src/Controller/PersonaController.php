@@ -2,12 +2,12 @@
 
 namespace Personas\Controller;
 
-use Personas\Model\AlbumTable;
+use Personas\Model\PersonaTable;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 
-use Personas\Form\AlbumForm;
-use Personas\Model\Album;
+use Personas\Form\PersonaForm;
+use Personas\Model\Persona;
 
 class PersonaController extends AbstractActionController
 {

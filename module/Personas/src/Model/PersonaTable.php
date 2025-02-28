@@ -1,11 +1,11 @@
 <?php
 
-namespace Album\Model;
+namespace Persona\Model;
 
 use RuntimeException;
 use Laminas\Db\TableGateway\TableGatewayInterface;
 
-class AlbumTable
+class PersonaTable
 {
     private $tableGateway;
 

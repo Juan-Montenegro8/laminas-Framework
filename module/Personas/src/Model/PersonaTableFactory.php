@@ -1,6 +1,6 @@
 <?php
 
-namespace Album\Model;
+namespace Persona\Model;
 
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\ResultSet\ResultSet;
@@ -8,15 +8,15 @@ use Laminas\Db\TableGateway\TableGateway;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
-class AlbumTableFactory implements FactoryInterface
+class PersonaTableFactory implements FactoryInterface
 {
 
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): AlbumTable
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): PersonaTable
     {
         $dbAdapter = $container->get(AdapterInterface::class);
         $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Album());
-        $tableGateway = new TableGateway('album', $dbAdapter, null, $resultSetPrototype);
-        return new AlbumTable($tableGateway);
+        $resultSetPrototype->setArrayObjectPrototype(new Persona());
+        $tableGateway = new TableGateway('Persona', $dbAdapter, null, $resultSetPrototype);
+        return new PersonaTable($tableGateway);
     }
 }

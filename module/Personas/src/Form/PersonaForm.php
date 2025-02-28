@@ -1,13 +1,13 @@
 <?php
 
-namespace Album\Form;
+namespace Persona\Form;
 
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 
-class AlbumForm extends Form
+class PersonaForm extends Form
 {
     public function __construct($name = null)
     {

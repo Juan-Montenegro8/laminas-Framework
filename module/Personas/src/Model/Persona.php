@@ -1,6 +1,6 @@
 <?php
 
-namespace Album\Model;
+namespace Persona\Model;
 
 use DomainException;
 use Laminas\Filter\StringTrim;
@@ -11,7 +11,7 @@ use Laminas\InputFilter\InputFilterAwareInterface;
 use Laminas\InputFilter\InputFilterInterface;
 use Laminas\Validator\StringLength;
 
-class Album implements InputFilterAwareInterface 
+class Persona implements InputFilterAwareInterface 
 {
     public $id;
     public $artist;
