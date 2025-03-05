@@ -1,104 +1,137 @@
 <?php
 
-namespace Personas\Controller;
+namespace Persona\Controller;
 
-use Personas\Model\PersonaTable;
+use Persona\Model\PersonaTable;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
+use Persona\Form\PersonaForm;
+use Persona\Model\Persona;
 
-use Personas\Form\PersonaForm;
-use Personas\Model\Persona;
+class PersonaController extends AbstractActionController {
 
-class PersonaController extends AbstractActionController
-{
-    private $table;
+    private $tablePersona;
 
     // Add this constructor:
-    public function __construct(AlbumTable $table)
-    {
-        $this->table = $table;
+    public function __construct(PersonaTable $tablePersona) {
+        $this->tablePersona = $tablePersona;
     }
-    
-    public function indexAction()
-    {
+
+    public function indexAction() {
         return new ViewModel([
-            'albums' => $this->table->fetchAll(),
+            'personas' => $this->tablePersona->fetchAll(),
         ]);
     }
 
-    public function addAction()
-    {
-        $form = new AlbumForm();
+    public function addAction() {
+
+        $listaDepartamentos = [];
+        $departamentos = $this->tablePersona->fetchAllD();
+        foreach ($departamentos as $departamento) {
+            try {
+                $listaDepartamentos[$departamento->idDepartamento] = $departamento->departamento;
+            } catch (Laminas\Validator\Exception\RuntimeException $exc) {
+                echo "Error: " . $exc->getMessage();
+            }
+        }
+
+        $form = new PersonaForm($listaDepartamentos);
         $form->get('submit')->setValue('Add');
 
         $request = $this->getRequest();
 
-        if (! $request->isPost()) {
+        if (!$request->isPost()) {
             return ['form' => $form];
         }
 
-        $album = new Album();
-        $form->setInputFilter($album->getInputFilter());
+        $persona = new Persona();
+        $form->setInputFilter($persona->getInputFilter());
         $form->setData($request->getPost());
 
-        if (! $form->isValid()) {
+        if (!$form->isValid()) {
             return ['form' => $form];
         }
 
-        $album->exchangeArray($form->getData());
-        $this->table->saveAlbum($album);
-        return $this->redirect()->toRoute('album');
+        $persona->exchangeArray($form->getData());
+        $this->tablePersona->savePersona($persona);
+        return $this->redirect()->toRoute('persona');
     }
 
-    public function editAction()
-    {
-        $id = (int) $this->params()->fromRoute('id', 0);
+    public function editAction() {
+        $idPersona = (int) $this->params()->fromRoute('idPersona', 0);
 
-        if (0 === $id) {
-            return $this->redirect()->toRoute('album', ['action' => 'add']);
+        if (0 === $idPersona) {
+            return $this->redirect()->toRoute('persona', ['action' => 'add']);
         }
 
         // Retrieve the album with the specified id. Doing so raises
         // an exception if the album is not found, which should result
         // in redirecting to the landing page.
         try {
-            $album = $this->table->getAlbum($id);
+            $persona = $this->tablePersona->getPersona($idPersona);
+            $municipioEscogido = $this->tablePersona->getMuncipio($persona->idMunicipio);
+//            var_dump($municipioEscogido);
         } catch (\Exception $e) {
-            return $this->redirect()->toRoute('album', ['action' => 'index']);
+            return $this->redirect()->toRoute('persona', ['action' => 'index']);
         }
 
-        $form = new AlbumForm();
-        $form->bind($album);
+        $listaDepartamentos = [];
+        $departamentos = $this->tablePersona->fetchAllD();
+        foreach ($departamentos as $departamento) {
+            try {
+                $listaDepartamentos[$departamento->idDepartamento] = $departamento->departamento;
+            } catch (Laminas\Validator\Exception\RuntimeException $exc) {
+                echo "Error: " . $exc->getMessage();
+            }
+        }
+
+        $listaMunicipios = [];
+        $municipios = $this->tablePersona->fetchAllM($municipioEscogido->idDepartamento);
+        foreach ($municipios as $municipio) {
+            try {
+                $listaMunicipios[$municipio->idMunicipio] = $municipio->municipio;
+            } catch (Laminas\Validator\Exception\RuntimeException $exc) {
+                echo "Error: " . $exc->getMessage();
+            }
+        }
+
+        $form = new PersonaForm($listaDepartamentos, $listaMunicipios);
+        $form->bind($persona);
+        $form->get('departamento')->setValue($municipioEscogido->idDepartamento);
+//        $form->get('idMunicipio')->setValue($persona->idMunicipio);
+//        $form->get('departamento')->setAttribute('disabled', true);
+        $form->get('identificacion')->setAttribute('disabled', true);
+//        $form->bind($depa);
         $form->get('submit')->setAttribute('value', 'Edit');
 
         $request = $this->getRequest();
-        $viewData = ['id' => $id, 'form' => $form];
+        $viewData = ['idPersona' => $idPersona, 'form' => $form];
 
-        if (! $request->isPost()) {
+        if (!$request->isPost()) {
             return $viewData;
         }
 
-        $form->setInputFilter($album->getInputFilter());
+        $form->setInputFilter($persona->getInputFilter());
         $form->setData($request->getPost());
 
-        if (! $form->isValid()) {
+        if (!$form->isValid()) {
             return $viewData;
         }
 
         try {
-            $this->table->saveAlbum($album);
+            $this->tablePersona->savePersona($persona);
         } catch (\Exception $e) {
+            
         }
 
         // Redirect to album list
-        return $this->redirect()->toRoute('album', ['action' => 'index']);
+        return $this->redirect()->toRoute('persona', ['action' => 'index']);
     }
 
-    public function deleteAction()
-    {
-        $id = (int) $this->params()->fromRoute('id', 0);
-        if (!$id) {
-            return $this->redirect()->toRoute('album');
+    public function deleteAction() {
+        $idPersona = (int) $this->params()->fromRoute('idPersona', 0);
+        if (!$idPersona) {
+            return $this->redirect()->toRoute('persona');
         }
 
         $request = $this->getRequest();
@@ -106,18 +139,43 @@ class PersonaController extends AbstractActionController
             $del = $request->getPost('del', 'No');
 
             if ($del == 'Yes') {
-                $id = (int) $request->getPost('id');
-                $this->table->deleteAlbum($id);
+                $idPersona = (int) $request->getPost('idPersona');
+                $this->tablePersona->deletePersona($idPersona);
             }
 
             // Redirect to list of albums
-            return $this->redirect()->toRoute('album');
+            return $this->redirect()->toRoute('persona');
         }
 
         return [
-            'id'    => $id,
-            'album' => $this->table->getAlbum($id),
+            'idPersona' => $idPersona,
+            'persona' => $this->tablePersona->getPersona($idPersona),
         ];
     }
-}
 
+    public function verificarIdentificacionAction() {
+        $response = [
+            'existe' => 1,
+        ];
+        $identificacion = (int) $this->params()->fromQuery('identificacion', 0);
+
+        if (!$this->tablePersona->getPersonaByIdentificacion($identificacion)) {
+            $response['existe'] = 0;
+        }
+        return new \Laminas\View\Model\JsonModel($response);
+    }
+
+    public function getMunicipiosAction() {
+
+        $idDepartamento = (int) $this->params()->fromQuery('idDepartamento', 0);
+        $municipios = $this->tablePersona->fetchAllM($idDepartamento);
+
+        $view = new ViewModel([
+            'idMunicipios' => $municipios
+        ]);
+
+        $view->setTerminal(true);
+
+        return $view;
+    }
+}
